@@ -113,7 +113,7 @@ zcash_protocol = { workspace = true, features = ["test-dependencies"] }
 pprof = { version = "0.15", features = ["criterion", "flamegraph"] }
 
 [features]
-default = ["multicore", "std", "circuits"]
+default = ["multicore", "std", "circuits", "zip-233"]
 std = ["document-features", "redjubjub/std"]
 zip-233 = []
 

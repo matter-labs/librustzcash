@@ -610,6 +610,8 @@ const UPGRADES_IN_ORDER: &[NetworkUpgrade] = &[
     NetworkUpgrade::Nu6_1,
     #[cfg(zcash_unstable = "nu7")]
     NetworkUpgrade::Nu7,
+    #[cfg(zcash_unstable = "zfuture")]
+    NetworkUpgrade::ZFuture,
 ];
 
 /// The "grace period" defined in [ZIP 212].

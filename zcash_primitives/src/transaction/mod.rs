@@ -648,6 +648,7 @@ impl TransactionData<Authorized> {
 }
 
 #[cfg(any(zcash_unstable = "nu7", zcash_unstable = "zfuture"))]
+#[derive(Debug)]
 struct V6HeaderFragment {
     consensus_branch_id: BranchId,
     lock_time: u32,
