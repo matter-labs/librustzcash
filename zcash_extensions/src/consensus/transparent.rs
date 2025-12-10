@@ -4,18 +4,24 @@ use std::convert::TryFrom;
 use zcash_primitives::extensions::transparent::{
     AuthData, Error, Extension, Precondition, Witness,
 };
+use zcash_primitives::transaction::components::TzeIn;
 use zcash_primitives::transaction::{Transaction, components::tze::TzeOut};
 use zcash_protocol::consensus::{BlockHeight, BranchId};
 
-use crate::transparent::demo;
+use crate::transparent::{demo, eth_bridge};
 
 /// Wire value for the demo extension identifier.
 pub const EXTENSION_DEMO: u32 = 0;
+
+/// Wire value for the `eth_bridge` extension identifier.
+/// Value is chosen to be 2 to not collide with TZE ID proposed by Starkware
+pub const EXTENSION_ETH_BRIDGE: u32 = 2;
 
 /// The set of programs that have assigned type IDs within the Zcash consensus rules.
 #[derive(Debug, Clone, Copy)]
 pub enum ExtensionId {
     Demo,
+    EthBridge,
 }
 
 pub struct InvalidExtId(u32);
@@ -26,6 +32,7 @@ impl TryFrom<u32> for ExtensionId {
     fn try_from(t: u32) -> Result<Self, Self::Error> {
         match t {
             EXTENSION_DEMO => Ok(ExtensionId::Demo),
+            EXTENSION_ETH_BRIDGE => Ok(ExtensionId::EthBridge),
             n => Err(InvalidExtId(n)),
         }
     }
@@ -35,6 +42,7 @@ impl From<ExtensionId> for u32 {
     fn from(type_id: ExtensionId) -> u32 {
         match type_id {
             ExtensionId::Demo => EXTENSION_DEMO,
+            ExtensionId::EthBridge => EXTENSION_ETH_BRIDGE,
         }
     }
 }
@@ -93,6 +101,41 @@ impl<'a> demo::Context for Context<'a> {
     }
 }
 
+/// Implementation of required operations for the `eth_bridge` extension, as satisfied
+/// by the context.
+impl<'a> eth_bridge::Context for Context<'a> {
+    fn is_tze_only(&self) -> bool {
+        self.tx.transparent_bundle().is_none()
+            && self.tx.sapling_bundle().is_none()
+            && self.tx.sprout_bundle().is_none()
+            && self.tx.orchard_bundle().is_none()
+    }
+
+    fn tx_tze_inputs(&self) -> &[TzeIn<AuthData>] {
+        if let Some(bundle) = self.tx.tze_bundle() {
+            &bundle.vin
+        } else {
+            &[]
+        }
+    }
+
+    fn tx_tze_outputs(&self) -> &[TzeOut] {
+        if let Some(bundle) = self.tx.tze_bundle() {
+            &bundle.vout
+        } else {
+            &[]
+        }
+    }
+
+    fn tx_transparent_outputs(&self) -> &[transparent::bundle::TxOut] {
+        if let Some(bundle) = self.tx.transparent_bundle() {
+            &bundle.vout
+        } else {
+            &[]
+        }
+    }
+}
+
 /// Identifier for the set of TZEs associated with the ZFUTURE network upgrade.
 /// This epoch is intended only for use on private test networks.
 struct EpochVTest;
@@ -114,6 +157,11 @@ impl Epoch for EpochVTest {
             ExtensionId::Demo => demo::Program
                 .verify(precondition, witness, ctx)
                 .map_err(|e| Error::ProgramError(format!("Epoch vTest program error: {}", e))),
+            ExtensionId::EthBridge => eth_bridge::Program
+                .verify(precondition, witness, ctx)
+                .map_err(|e| {
+                    Error::ProgramError(format!("Epoch vTest program error (eth_bridge): {}", e))
+                }),
         }
     }
 }
