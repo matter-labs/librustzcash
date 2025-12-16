@@ -1,3 +1,39 @@
+# Matter Labs fork of [librustzcash](https://github.com/zcash/librustzcash).
+
+This fork was created to showcase the prospects of using a TZE to implement
+a trustless bridge between Zcash and Ethereum.
+
+For an end-to-end flow, check the [bridge repository](https://github.com/matter-labs/zcash_eth_bridge).
+
+## Changes made
+
+Most of the changes introduced in the repository are in the [`zcash_extensions`](./zcash_extensions/) module,
+where an implementation of a TZE for bridging is provided.
+
+The changes made are not proposed for the production-ready implementation,
+the main priority during development was the speed of prototyping. In case
+the prototype is considered viable, a formal TZE to specify new consensus
+rules is to be created, and a new (proper) implementation is to be written.
+
+For a full list of changes, see [the diff](https://github.com/zcash/librustzcash/compare/main...matter-labs:librustzcash:popzxc-prototype).
+
+## TZE implementation details
+
+In the current form, TZE certainly lacks a lot of verification logic, including the ZK proof verification.
+This was made intentionally: the minimum possible amount of work has been done to showcase an idea in
+a prototype that works end-to-end, and the parts that can be done later were left as TODO.
+
+In case the TZE proposal will be accepted, a new prototype that works end-to-end _with_ all of the required
+verification logic is to be implemented.
+
+## Acknowlegements
+
+This work was partially based on the [fork of librustzcash](https://github.com/Ztarknet/librustzcash)
+made by [Starkware](https://starkware.co/). Parts of the code from the linked fork were used
+in this repository.
+Both original repository and Starkware's fork are double-licensed under [MIT](https://github.com/Ztarknet/librustzcash/blob/zfuture/LICENSE-MIT)
+and [Apache 2.0](https://github.com/Ztarknet/librustzcash/blob/zfuture/LICENSE-APACHE) licenses.
+
 # Zcash Rust crates
 
 This repository contains a (work-in-progress) set of Rust crates for working
