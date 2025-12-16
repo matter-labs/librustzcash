@@ -1,3 +1,8 @@
+//! Create mode is meant to "claim" an STF identified by a unique identifier
+//! The unique identifier is required, since multiple STFs can be instantiated,
+//! and we need a measure to make sure that deposits can only be claimed
+//! by the correct STF instance.
+
 use zcash_primitives::extensions::transparent::FromPayload;
 
 use crate::transparent::eth_bridge::Precondition as PreconditionEnum;
@@ -7,7 +12,7 @@ pub const MODE: u32 = 0;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Precondition {
-    pub(crate) stf_identifier: [u8; 32], // TODO: should be a hash of signature for pre-defined message to make it unique?
+    pub(crate) stf_identifier: [u8; 32], // TODO: should be a hash of signature for pre-defined message to make it unique enforced through witness?
     pub(crate) root_hash: [u8; 32],
 }
 

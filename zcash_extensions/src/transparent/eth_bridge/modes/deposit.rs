@@ -1,3 +1,7 @@
+//! Deposit mode is meant to lock funds into the STF.
+//! The expectation is that only the STF with a matching identifier
+//! can consume the UTXO created in this mode.
+
 use zcash_primitives::extensions::transparent::FromPayload as _;
 
 use crate::transparent::eth_bridge::Witness as WitnessEnum;

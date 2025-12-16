@@ -1,3 +1,13 @@
+//! The STF mode is meant to progress the bridge state,
+//! processing deposits and withdrawals.
+//!
+//! Deposits are represented by UTXO in the Deposit mode,
+//! while withdrawals are represented by transparent outputs.
+//!
+//! Both are enforeced through the witness, with the expectation
+//! that hashes of the deposits and withdrawals are included into
+//! the public input for ZK proof verification.
+
 use std::collections::{HashMap, HashSet};
 
 use crate::transparent::eth_bridge::Precondition as PreconditionEnum;
